@@ -38,6 +38,7 @@ module.exports = {
             }
 
             await interaction.reply({ content: 'I nostri blerp disagiati.', ephemeral: false, components: rows });
+        
         }
 	},
 };

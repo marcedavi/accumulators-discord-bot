@@ -9,7 +9,7 @@ const client = new Discord.Client({
 });
 
 // Create player
-const player = Voice.createAudioPlayer();
+client.audioPlayer = Voice.createAudioPlayer();
 
 // Load commands
 client.commands = new Discord.Collection();
@@ -57,7 +57,7 @@ client.on('interactionCreate', async interaction => {
                 selfMute: false
             });
 
-            connection.subscribe(player);
+            connection.subscribe(client.audioPlayer);
         }
 
         // Play sound
@@ -65,8 +65,8 @@ client.on('interactionCreate', async interaction => {
             inputType: Voice.StreamType.Arbitrary,
         });
 
-	    await Voice.entersState(player, Voice.AudioPlayerStatus.Idle, 1e3)
-            .then(() => player.play(resource))
+	    await Voice.entersState(client.audioPlayer, Voice.AudioPlayerStatus.Idle, 1e3)
+            .then(() => client.audioPlayer.play(resource))
             .catch(() => console.log('Already playing'));
 
         // Defer update to avoid replying
