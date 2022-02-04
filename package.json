@@ -1,0 +1,28 @@
+{
+  "name": "accumulators-discord-bot",
+  "version": "1.0.0",
+  "description": "Custom discord bot made for personal usage.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcedavi/accumulators-discord-bot.git"
+  },
+  "author": "Marcello Davi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcedavi/accumulators-discord-bot/issues"
+  },
+  "homepage": "https://github.com/marcedavi/accumulators-discord-bot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/opus": "^0.5.3",
+    "@discordjs/rest": "^0.3.0",
+    "@discordjs/voice": "^0.8.0",
+    "discord-api-types": "^0.26.1",
+    "discord.js": "^13.6.0",
+    "sodium": "^3.0.2"
+  }
+}
