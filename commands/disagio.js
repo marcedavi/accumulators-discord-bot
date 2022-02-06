@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton } = require('discord.js');
-const stream = require('sodium/lib/stream');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,14 +21,31 @@ module.exports = {
         // For each message
         for(let i = 0; i < array_of_chunks.length; i += 5) {
             let rows = []
+
+            let maxActionRows = 5
+
+            if(i === 0) {
+                maxActionRows = 4
+
+                let row = new MessageActionRow()
+                row.addComponents(
+                    new MessageButton()
+                        .setCustomId('bestemmia|')
+                        .setLabel('Bestemmia')
+                        .setStyle('DANGER')
+                );
+                rows.push(row)
+            }
+
             // For each row
-            for(let j = 0; j < 5 && i*5+j < array_of_chunks.length; j++) {
+            // I feel like that i*maxActionRows+j is gonna give problems
+            for(let j = 0; j < maxActionRows && i*maxActionRows+j < array_of_chunks.length; j++) {
                 let row = new MessageActionRow()
                 // For each blerp
                 for(let key in array_of_chunks[i*5+j]) {
                     row.addComponents(
                         new MessageButton()
-                            .setCustomId(key)
+                            .setCustomId('suona|' + key)
                             .setLabel(key)
                             .setStyle('PRIMARY')
                     );

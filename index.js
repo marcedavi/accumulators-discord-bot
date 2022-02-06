@@ -1,4 +1,5 @@
 const fs = require('fs')
+const AWS = require('aws-sdk')
 const Discord = require('discord.js')
 const Voice = require('@discordjs/voice')
 const config = require('./config.json')
@@ -10,6 +11,12 @@ const client = new Discord.Client({
 
 // Create player
 client.audioPlayer = Voice.createAudioPlayer();
+
+// Create AWS Polly
+client.polly = new AWS.Polly({
+    signatureVersion: 'v4',
+    region: 'eu-west-3'
+})
 
 // Load commands
 client.commands = new Discord.Collection();
@@ -36,43 +43,9 @@ client.on('interactionCreate', async interaction => {
 
 	if (!interaction.isCommand() && !interaction.isButton()) return;
 
-    // Ugliest way ever of handling buttons but i have no time
+    // There's probably better ways to handle buttons
     if(interaction.isButton()) {
-
-        // Get VoiceConnection
-        let connection = Voice.getVoiceConnection(interaction.member.voice.channelId);
-
-        // Join channel if needed
-        if(typeof connection === 'undefined') {
-            const channel = await client.channels.fetch(interaction.member.voice.channelId)
-                .catch(() => interaction.reply({content: 'Entra nel canale lurida merda', ephemeral: true}));
-
-            if (!channel) return console.error('The channel does not exist!');
-
-            connection = Voice.joinVoiceChannel({
-                channelId: channel.id,
-                guildId: channel.guild.id,
-                adapterCreator: channel.guild.voiceAdapterCreator,
-                selfDeaf: false,
-                selfMute: false
-            });
-
-            connection.subscribe(client.audioPlayer);
-        }
-
-        // Play sound
-        const resource = Voice.createAudioResource(client.sounds[interaction.customId], {
-            inputType: Voice.StreamType.Arbitrary,
-        });
-
-	    await Voice.entersState(client.audioPlayer, Voice.AudioPlayerStatus.Idle, 1e3)
-            .then(() => client.audioPlayer.play(resource))
-            .catch(() => console.log('Already playing'));
-
-        // Defer update to avoid replying
-        interaction.deferUpdate()
-
-        return
+        interaction.commandName = interaction.customId.split('|')[0]
     }
 
 	const command = client.commands.get(interaction.commandName);
