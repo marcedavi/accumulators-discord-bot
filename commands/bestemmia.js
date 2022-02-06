@@ -35,8 +35,15 @@ module.exports = {
         if(!data || !(data.AudioStream instanceof Buffer))
             return
 
+        fs.writeFileSync("./bestemmia.mp3", data.AudioStream, function(err) {
+            if (err) {
+                return console.log(err)
+            }
+            console.log("The file was saved!")
+        })
+
         // Play sound
-        await common.playSound(client, connection, [data.AudioStream], Voice.StreamType.Arbitrary)
+        await common.playSound(client, connection, "./bestemmia.mp3", Voice.StreamType.Arbitrary)
 
         // Defer update to avoid replying
         interaction.reply({content: response.data.bestemmia, ephemeral: true})

@@ -28,7 +28,7 @@ module.exports = {
         // Request tts to AWS Polly
         let data = await client.polly.synthesizeSpeech({
             'Text': testo,
-            'OutputFormat': 'mp3',
+            'OutputFormat': 'ogg_vorbis',
             'VoiceId': 'Giorgio',
             'Engine': 'standard'
         }).promise().catch(() => {})
@@ -36,8 +36,15 @@ module.exports = {
         if(!data || !(data.AudioStream instanceof Buffer))
             return
 
+        fs.writeFileSync("./professa.mp3", data.AudioStream, function(err) {
+            if (err) {
+                return console.log(err)
+            }
+            console.log("The file was saved!")
+        })
+
         // Play sound
-        await common.playSound(client, connection, [data.AudioStream], Voice.StreamType.Arbitrary)
+        await common.playSound(client, connection, "./professa.mp3", Voice.StreamType.Arbitrary)
 
         // Defer update to avoid replying
         interaction.reply({content: testo, ephemeral: true})
