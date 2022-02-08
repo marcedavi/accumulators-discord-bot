@@ -1,18 +1,22 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton } = require('discord.js');
 const Voice = require('@discordjs/voice')
-const common = require('../common')
+const fs = require('fs')
+const common = require('../common');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('disagio')
-		.setDescription('Per quando ti sei incarognato'),
+		.setName('suoni')
+		.setDescription('Interfaccia per riprodurre i nostri suoni'),
 	async execute(client, interaction) {
         
         // Create buttons collector
         const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON' });
 
         collector.on('collect', async (i) => {
+
+            // Defer reply to avoid replying
+            i.deferUpdate()
 
             // Join voice channel
             let connection = await common.joinMemberVoiceChannel(client, i.member)
@@ -22,11 +26,27 @@ module.exports = {
                 return
             }
     
+            let audio = client.sounds[i.customId]
+
+            // Se è stato premuto il pulsante "bestemmia"
+            if(i.customId === 'bestemmia') {
+                const bestemmia = await common.getBestemmia()
+
+                if(!bestemmia)
+                    return
+
+                const buffer = await common.synthesize('mp3', 'stronzo', bestemmia)
+
+                fs.writeFileSync("./bestemmia.mp3", buffer, function(err) {
+                    if (err)
+                        return console.log(err)
+                })
+
+                audio = './bestemmia.mp3'
+            }
+
             // Play sound
-            await common.playSound(client, connection, client.sounds[i.customId], Voice.StreamType.Arbitrary)
-    
-            // Defer update to avoid replying
-            i.deferUpdate()
+            common.playAudio(client, connection, audio, Voice.StreamType.Arbitrary)
         });
 
         // Split blerps object into chunks
@@ -52,7 +72,7 @@ module.exports = {
                 let row = new MessageActionRow()
                 row.addComponents(
                     new MessageButton()
-                        .setCustomId('bestemmia|')
+                        .setCustomId('bestemmia')
                         .setLabel('Bestemmia')
                         .setStyle('DANGER')
                 );
@@ -75,7 +95,7 @@ module.exports = {
                 rows.push(row)
             }
 
-            await interaction.reply({ content: 'I nostri blerp disagiati.', ephemeral: false, components: rows });
+            await interaction.reply({ content: 'I nostri suoni', ephemeral: false, components: rows });
         
         }
 	},
