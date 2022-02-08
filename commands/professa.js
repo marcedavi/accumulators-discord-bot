@@ -1,13 +1,19 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const Voice = require('@discordjs/voice')
-const axios = require('axios')
 const fs = require('fs')
 const common = require('../common')
+const AWS = require('aws-sdk')
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('professa')
         .setDescription('Professa il verbo del signore')
+        .addStringOption(option =>
+            option.setName('voce')
+                .setDescription('Voce da stronzo o da puttana')
+                .setRequired(true)
+                .addChoice('puttana', 'puttana')
+                .addChoice('stronzo', 'stronzo'))
         .addStringOption(option =>
             option.setName('testo')
                 .setDescription('Il cazzo che devi professare')
@@ -23,15 +29,22 @@ module.exports = {
             return
         }
 
+        const voce = interaction.options.getString('voce')
         const testo = interaction.options.getString('testo')
 
+        // Create AWS Polly
+        polly = new AWS.Polly({
+            signatureVersion: 'v4',
+            region: voce === 'stronzo' ? 'eu-west-3' : 'eu-central-1'
+        })
+
         // Request tts to AWS Polly
-        let data = await client.polly.synthesizeSpeech({
+        let data = await polly.synthesizeSpeech({
             'Text': testo,
             'OutputFormat': 'ogg_vorbis',
-            'VoiceId': 'Giorgio',
-            'Engine': 'standard'
-        }).promise().catch(() => {})
+            'VoiceId': voce === 'stronzo' ? 'Giorgio' : 'Bianca',
+            'Engine': voce === 'stronzo' ? 'standard' : 'neural'
+        }).promise().catch((error) => {console.log(error)})
 
         if(!data || !(data.AudioStream instanceof Buffer))
             return

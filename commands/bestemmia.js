@@ -3,11 +3,18 @@ const Voice = require('@discordjs/voice')
 const axios = require('axios')
 const fs = require('fs')
 const common = require('../common')
+const AWS = require('aws-sdk')
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('bestemmia')
-        .setDescription('Se non bestemmio guarda'),
+        .setDescription('Se non bestemmio guarda')
+        .addStringOption(option =>
+            option.setName('voce')
+                .setDescription('Voce da stronzo o da puttana')
+                .setRequired(true)
+                .addChoice('puttana', 'puttana')
+                .addChoice('stronzo', 'stronzo')),
     async execute(client, interaction) {
 
         // Join voice channel
@@ -17,20 +24,28 @@ module.exports = {
             interaction.reply({content: 'Entra nel canale lurida merda', ephemeral: true})
             return
         }
-        
+
         // Request random bestemmia
         let response = await axios.get('https://bestemmie.org/api/random/')
 
         if (response.status !== 200)
             return
 
+        const voce = interaction.options.getString('voce')
+
+        // Create AWS Polly
+        polly = new AWS.Polly({
+            signatureVersion: 'v4',
+            region: voce === 'stronzo' ? 'eu-west-3' : 'eu-central-1'
+        })
+
         // Request tts to AWS Polly
-        let data = await client.polly.synthesizeSpeech({
+        let data = await polly.synthesizeSpeech({
             'Text': response.data.bestemmia,
-            'OutputFormat': 'mp3',
-            'VoiceId': 'Giorgio',
-            'Engine': 'standard'
-        }).promise().catch(() => {})
+            'OutputFormat': 'ogg_vorbis',
+            'VoiceId': voce === 'stronzo' ? 'Giorgio' : 'Bianca',
+            'Engine': voce === 'stronzo' ? 'standard' : 'neural'
+        }).promise().catch((error) => {console.log(error)})
 
         if(!data || !(data.AudioStream instanceof Buffer))
             return

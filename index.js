@@ -1,5 +1,4 @@
 const fs = require('fs')
-const AWS = require('aws-sdk')
 const Discord = require('discord.js')
 const Voice = require('@discordjs/voice')
 const config = require('./config.json')
@@ -11,12 +10,6 @@ const client = new Discord.Client({
 
 // Create player
 client.audioPlayer = Voice.createAudioPlayer();
-
-// Create AWS Polly
-client.polly = new AWS.Polly({
-    signatureVersion: 'v4',
-    region: 'eu-west-3'
-})
 
 // Load commands
 client.commands = new Discord.Collection();
