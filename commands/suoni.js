@@ -10,45 +10,6 @@ module.exports = {
 		.setDescription('Interfaccia per riprodurre i nostri suoni'),
 	async execute(client, interaction) {
         
-        // Create buttons collector
-        const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON' });
-
-        collector.on('collect', async (i) => {
-
-            // Defer reply to avoid replying
-            i.deferUpdate()
-
-            // Join voice channel
-            let connection = await common.joinMemberVoiceChannel(client, i.member)
-    
-            if(connection === null) {
-                i.reply({content: 'Entra nel canale lurida merda', ephemeral: true})
-                return
-            }
-    
-            let audio = client.sounds[i.customId]
-
-            // Se è stato premuto il pulsante "bestemmia"
-            if(i.customId === 'bestemmia') {
-                const bestemmia = await common.getBestemmia()
-
-                if(!bestemmia)
-                    return
-
-                const buffer = await common.synthesize('mp3', 'stronzo', bestemmia)
-
-                fs.writeFileSync("./bestemmia.mp3", buffer, function(err) {
-                    if (err)
-                        return console.log(err)
-                })
-
-                audio = './bestemmia.mp3'
-            }
-
-            // Play sound
-            common.playAudio(client, connection, audio, Voice.StreamType.Arbitrary)
-        });
-
         // Split blerps object into chunks
         const chunksize = 5;
         const array_of_chunks = Object.keys(client.sounds).reduce((c, k, i) => {
@@ -96,7 +57,51 @@ module.exports = {
             }
 
             await interaction.reply({ content: 'I nostri suoni', ephemeral: false, components: rows });
+            
+            const message = await interaction.fetchReply()
+
+            // Create a button collector for each message
+            const collector = message.createMessageComponentCollector({ componentType: 'BUTTON' });
+
+            collector.on('collect', async (i) => {
+
+                // Join voice channel
+                let connection = await common.joinMemberVoiceChannel(client, i.member)
         
+                if(connection === null) {
+                    i.reply({content: 'Entra nel canale lurida merda', ephemeral: true})
+                    return
+                }
+        
+                // Defer reply to avoid replying
+                i.deferUpdate()
+
+                let audio = null
+
+                // Se è stato premuto il pulsante "bestemmia"
+                if(i.customId === 'bestemmia') {
+                    const bestemmia = await common.getBestemmia()
+
+                    if(!bestemmia)
+                        return
+
+                    const buffer = await common.synthesize('mp3', 'stronzo', bestemmia)
+
+                    fs.writeFileSync("./bestemmia.mp3", buffer, function(err) {
+                        if (err)
+                            return console.log(err)
+                    })
+
+                    audio = './bestemmia.mp3'
+                } else {
+                    audio = client.sounds[i.customId]
+                }
+
+                // Play sound
+                common.playAudio(client, connection, audio, Voice.StreamType.Arbitrary)
+            });
+
         }
+
 	},
 };

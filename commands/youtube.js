@@ -43,15 +43,6 @@ module.exports = {
         if(!playing)
             return
 
-        // Create button collector
-        const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON', time: 3600000 });
-
-        collector.on('collect', async (i) => {
-            await client.audioPlayer.stop()
-            await interaction.deleteReply()
-            collector.stop()
-        });
-
         // Reply with controls
         let row = new Discord.MessageActionRow()
         .addComponents(
@@ -59,7 +50,23 @@ module.exports = {
                 .setCustomId('stop')
                 .setLabel('Stop')
                 .setStyle('PRIMARY'))
-        interaction.reply({content: 'Playing', ephemeral: false, components: [row]})
+        
+        await interaction.reply({content: 'Playing', ephemeral: false, components: [row]})
+        
+        const message = await interaction.fetchReply()
+
+        // Create button collector
+        const collector = message.createMessageComponentCollector({ componentType: 'BUTTON', time: 3600000 });
+
+        collector.on('collect', async (i) => {
+            await client.audioPlayer.stop()
+            await interaction.deleteReply()
+
+            client.audioPlayer = Voice.createAudioPlayer();
+
+            collector.stop()
+        });
+
 
     },
 };

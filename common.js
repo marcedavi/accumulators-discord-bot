@@ -65,18 +65,29 @@ module.exports = {
     playAudio: async (client, connection, audioResource, streamType) => {
         connection.subscribe(client.audioPlayer);
                     
+        console.log('Player subscribed')
+
         // Play sound
         const resource = Voice.createAudioResource(audioResource, {
             inputType: streamType,
         });
 
-        let playing = await Voice.entersState(client.audioPlayer, Voice.AudioPlayerStatus.Idle, 1e3)
-            .then(() => false)
-            .catch(() => true);
+        console.log('Audio resource created')
 
-        if(!playing)
+        let playing = await Voice.entersState(client.audioPlayer, Voice.AudioPlayerStatus.Idle, 1e3)
+            .then(() => {
+                console.log('Not playing')
+                return false
+            })
+            .catch((error) => {
+                console.log('Already playing')
+                return true
+            });
+
+        if(!playing) {
             client.audioPlayer.play(resource)
-     
+            console.log('playing')
+        }
         return !playing
     }
 } 
