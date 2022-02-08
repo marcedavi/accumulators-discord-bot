@@ -34,12 +34,7 @@ client.once('ready', async () => {
 // On interactionCreate
 client.on('interactionCreate', async interaction => {
 
-	if (!interaction.isCommand() && !interaction.isButton()) return;
-
-    // There's probably better ways to handle buttons
-    if(interaction.isButton()) {
-        interaction.commandName = interaction.customId.split('|')[0]
-    }
+	if (!interaction.isCommand()) return;
 
 	const command = client.commands.get(interaction.commandName);
 

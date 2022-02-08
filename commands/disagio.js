@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton } = require('discord.js');
+const Voice = require('@discordjs/voice')
+const common = require('../common')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -7,6 +9,26 @@ module.exports = {
 		.setDescription('Per quando ti sei incarognato'),
 	async execute(client, interaction) {
         
+        // Create buttons collector
+        const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON' });
+
+        collector.on('collect', async (i) => {
+
+            // Join voice channel
+            let connection = await common.joinMemberVoiceChannel(client, i.member)
+    
+            if(connection === null) {
+                i.reply({content: 'Entra nel canale lurida merda', ephemeral: true})
+                return
+            }
+    
+            // Play sound
+            await common.playSound(client, connection, client.sounds[i.customId], Voice.StreamType.Arbitrary)
+    
+            // Defer update to avoid replying
+            i.deferUpdate()
+        });
+
         // Split blerps object into chunks
         const chunksize = 5;
         const array_of_chunks = Object.keys(client.sounds).reduce((c, k, i) => {
@@ -18,7 +40,7 @@ module.exports = {
             return c;
         }, []);
 
-        // For each message
+        // Build and send each message
         for(let i = 0; i < array_of_chunks.length; i += 5) {
             let rows = []
 
@@ -45,7 +67,7 @@ module.exports = {
                 for(let key in array_of_chunks[i*5+j]) {
                     row.addComponents(
                         new MessageButton()
-                            .setCustomId('suona|' + key)
+                            .setCustomId(key)
                             .setLabel(key)
                             .setStyle('PRIMARY')
                     );
