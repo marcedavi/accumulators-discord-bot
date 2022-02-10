@@ -11,8 +11,9 @@ module.exports = {
             option.setName('voce')
                 .setDescription('Voce con cui il bot parlerà')
                 .setRequired(true)
-                .addChoice('puttana', 'puttana')
-                .addChoice('stronzo', 'stronzo'))
+                .addChoice('Bianca', 'Bianca')
+                .addChoice('Carla', 'Carla')
+                .addChoice('Giorgio', 'Giorgio'))
         .addStringOption(option =>
             option.setName('testo')
                 .setDescription('La frase che il bot dirà')

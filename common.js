@@ -46,15 +46,15 @@ module.exports = {
         // Create AWS Polly
         polly = new AWS.Polly({
             signatureVersion: 'v4',
-            region: voice === 'stronzo' ? 'eu-west-3' : 'eu-central-1'
+            region: voice === 'Bianca' ? 'eu-central-1' : 'eu-west-3'
         })
 
         // Request tts to AWS Polly
         let data = await polly.synthesizeSpeech({
             'Text': text,
             'OutputFormat': format,
-            'VoiceId': voice === 'stronzo' ? 'Giorgio' : 'Bianca',
-            'Engine': voice === 'stronzo' ? 'standard' : 'neural'
+            'VoiceId': voice,
+            'Engine': voice === 'Bianca' ? 'neural' : 'standard'
         }).promise().catch((error) => {console.log(error)})
 
         if(!data || !(data.AudioStream instanceof Buffer))
