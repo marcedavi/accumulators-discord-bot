@@ -43,18 +43,39 @@ module.exports = {
     
     },
     synthesize: async (format, voice, text) => {
+
+        engine = 'standard'
+
+        switch(voice) {
+            case 'Criminale':
+                voice = 'Giorgio'
+                engine = 'standard'
+                text = '<amazon:effect vocal-tract-length="+30%"><prosody pitch="-30%">' + text + '</prosody></amazon:effect>'
+                break
+            case 'Chipmunk':
+                voice = 'Bianca'
+                engine = 'standard'
+                text = '<amazon:effect vocal-tract-length="-30%"><prosody pitch="+50%">' + text + '</prosody></amazon:effect>'
+                break
+            default:
+                engine = voice === 'Bianca' ? 'neural' : 'standard'
+        }
+        
+        text = '<speak>' + text + '</speak>'
+
         // Create AWS Polly
         polly = new AWS.Polly({
             signatureVersion: 'v4',
-            region: voice === 'Bianca' ? 'eu-central-1' : 'eu-west-3'
+            region: 'eu-central-1'
         })
 
         // Request tts to AWS Polly
         let data = await polly.synthesizeSpeech({
+            'TextType': 'ssml',
             'Text': text,
             'OutputFormat': format,
             'VoiceId': voice,
-            'Engine': voice === 'Bianca' ? 'neural' : 'standard'
+            'Engine': engine
         }).promise().catch((error) => {console.log(error)})
 
         if(!data || !(data.AudioStream instanceof Buffer))

@@ -13,7 +13,9 @@ module.exports = {
                 .setRequired(true)
                 .addChoice('Bianca', 'Bianca')
                 .addChoice('Carla', 'Carla')
-                .addChoice('Giorgio', 'Giorgio'))
+                .addChoice('Giorgio', 'Giorgio')
+                .addChoice('Criminale', 'Criminale')
+                .addChoice('Chipmunk', 'Chipmunk'))
         .addStringOption(option =>
             option.setName('testo')
                 .setDescription('La frase che il bot dirà')
@@ -30,6 +32,7 @@ module.exports = {
         }
 
         const voce = interaction.options.getString('voce')
+        const tono = interaction.options.getString('tono')
         const testo = interaction.options.getString('testo')
 
         let audio = await common.synthesize('mp3', voce, testo)

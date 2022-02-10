@@ -85,7 +85,7 @@ module.exports = {
                     if(!bestemmia)
                         return
 
-                    const buffer = await common.synthesize('mp3', 'stronzo', bestemmia)
+                    const buffer = await common.synthesize('mp3', 'Giorgio', bestemmia)
 
                     fs.writeFileSync("./bestemmia.mp3", buffer, function(err) {
                         if (err)
