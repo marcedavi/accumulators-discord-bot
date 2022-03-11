@@ -10,6 +10,9 @@ module.exports = {
 		.setDescription('Interfaccia per riprodurre i nostri suoni'),
 	async execute(client, interaction) {
         
+        // Add bestemmia
+        client.sounds = Object.assign({}, {'bestemmia': 'bestemmia'}, client.sounds);
+
         // Split blerps object into chunks
         const chunksize = 5;
         const array_of_chunks = Object.keys(client.sounds).reduce((c, k, i) => {
@@ -27,19 +30,6 @@ module.exports = {
 
             let maxActionRows = 5
 
-            if(i === 0) {
-                maxActionRows = 4
-
-                let row = new MessageActionRow()
-                row.addComponents(
-                    new MessageButton()
-                        .setCustomId('bestemmia')
-                        .setLabel('Bestemmia')
-                        .setStyle('DANGER')
-                );
-                rows.push(row)
-            }
-
             // For each row
             // I feel like that i*maxActionRows+j is gonna give problems
             for(let j = 0; j < maxActionRows && i*maxActionRows+j < array_of_chunks.length; j++) {
@@ -50,7 +40,7 @@ module.exports = {
                         new MessageButton()
                             .setCustomId(key)
                             .setLabel(key)
-                            .setStyle('PRIMARY')
+                            .setStyle(key == 'bestemmia' ? 'DANGER' : 'PRIMARY')
                     );
                 }
                 rows.push(row)
