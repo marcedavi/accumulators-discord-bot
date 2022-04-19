@@ -7,6 +7,16 @@ Join the voice channel the member is in and return the VoiceConnection
 Returns null if the user is not in a voice channel
 */
 module.exports = {
+    getRedgifs: async(url) => {
+
+        let response = await axios.get(url)
+        
+        if (response.status !== 200)
+            return null
+
+        return response.data.gifs
+        
+    },
     getBestemmia: async () => {
         // Request random bestemmia
         let response = await axios.get('https://bestemmie.org/api/random/')

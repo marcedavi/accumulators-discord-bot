@@ -8,6 +8,10 @@ const client = new Discord.Client({
     intents: new Discord.Intents(32767) // All intents
 });
 
+// Last redgifs requests
+client.lastTitsRedgifsRequest = new Date(Date.now() - 30000);
+client.lastAssRedgifsRequest = new Date(Date.now() - 30000);
+
 // Create player
 client.audioPlayer = Voice.createAudioPlayer();
 
