@@ -14,7 +14,7 @@ module.exports = {
         if (response.status !== 200)
             return null
 
-        return response.data.gifs
+        return response.data
         
     },
     getBestemmia: async () => {
