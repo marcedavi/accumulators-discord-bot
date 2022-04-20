@@ -12,7 +12,8 @@ module.exports = {
                 .addChoice('Culo', 'Ass')
                 .addChoice('Tette', 'Tits')
                 .addChoice('Pene', 'Big+Dick')
-                .addChoice('Puccacchia', 'Pussy')),
+                .addChoice('Puccacchia', 'Pussy')
+                .addChoice('Trans', 'Trans')),
     async execute(client, interaction) {
 
         await interaction.deferReply();
