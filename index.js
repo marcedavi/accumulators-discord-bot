@@ -11,6 +11,7 @@ const client = new Discord.Client({
 // Last redgifs requests
 client.lastTitsRedgifsRequest = new Date(Date.now() - 30000);
 client.lastAssRedgifsRequest = new Date(Date.now() - 30000);
+client.lastPeneRedgifsRequest = new Date(Date.now() - 30000);
 
 // Create player
 client.audioPlayer = Voice.createAudioPlayer();
