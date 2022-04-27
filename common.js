@@ -17,6 +17,74 @@ module.exports = {
         return response.data
         
     },
+    getInsulto: () => {
+        
+        starts = [
+            "Brutto",
+            "Schifoso",
+            "Ignobile",
+            "Mi fai schifo,",
+            "Baciami il culo,",
+            "Leccami il cazzo,",
+            "Incapace",
+            "Viscido",
+            "Fetido",
+            "Mongoloide",
+            "Lo sai cosa sei, vero? Brutto",
+            "Inginocchiati,",
+            "Impertinente",
+            "Infetto",
+            "Mi fai ribrezzo,",
+            "Sai che sei proprio un",
+            "Fammi un bocchino,",
+            "Ciucciami la minchia,",
+            "Sei proprio un",
+            "Non de lo dovrei dire, ma sei un",
+            "Viscido",
+            "Assomigli tanto ad un",
+            "Non sei altro che un",
+            "Baciami il culo,",
+            "Incapace",
+            "Inginocchiati e baciami,",
+            "Cattivo",
+            "Negro",
+            "Fammi un bocchino,"
+        ]
+
+        ends = [
+            "stronzo",
+            "bastardo", 
+            "minchione", 
+            "figlio di una bagascia", 
+            "bastardone", 
+            "stronzone",
+            "puttaniere",
+            "puttaniere",
+            "sadomasochista",
+            "testa di cazzo", 
+            "gallinaio", 
+            "analfabeta", 
+            "coglionazzo", 
+            "pedofilo", 
+            "testa di minchia", 
+            "cazzone", 
+            "scemo di un", 
+            "deficiente", 
+            "stupido di un", 
+            "mongoloide", 
+            "fuso mentale", 
+            "coglione", 
+            "baciaculi", 
+            "baciacazzi", 
+            "lecchino", 
+            "secchione", 
+            "figlio di mignotta",
+            "omosessuale"
+        ]
+
+        return starts[Math.floor(Math.random() * starts.length)] + " " + ends[Math.floor(Math.random() * ends.length)]
+        
+    },
     getBestemmia: async () => {
         // Request random bestemmia
         let response = await axios.get('https://bestemmie.org/api/random/')
